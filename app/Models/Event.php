@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -21,6 +22,11 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_user')->withTimestamps();
     }
 
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
     public function scopeUpcoming($query)
     {
         return $query->where('starts_at', '>=', now())->orderBy('starts_at');
@@ -28,10 +34,10 @@ class Event extends Model
 
     public function isFull(): bool
     {
-        return $this->capacity !== null && $this->attendees()->count() >= $this->capacity;
+        return $this->capacity !== null && $this->registrations()->count() >= $this->capacity;
     }
 
-    public function hasAttendee(\App\Models\User $user): bool
+    public function hasAttendee(User $user): bool
     {
         return $this->attendees()->where('user_id', $user->id)->exists();
     }

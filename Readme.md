@@ -1,43 +1,47 @@
 # Evenementen-planner
 
-Laravel-applicatie voor het beheren van evenementen, gebouwd met de TALL-stack (TailwindCSS, AlpineJS, Laravel, Livewire) en FilamentPHP voor het beheerdersdashboard.
+Laravel-applicatie voor het beheren van evenementen. Beheerders maken en beheren evenementen via FilamentPHP, bezoekers bekijken publiek aankomende evenementen en kunnen zich aanmelden zonder account.
 
-## Gebruikte versies
+## Stack
 
 - Laravel 13
-- TailwindCSS 4 (via `@tailwindcss/vite`)
-- Livewire 4 (single-file components)
 - FilamentPHP 5
+- Livewire 4 single-file components
+- TailwindCSS 4
 - AlpineJS
+- MySQL
 
-> **Let op:** dit project gebruikt Livewire 4, uitgebracht in januari 2026. Livewire 4 introduceert *single-file components*: in plaats van een aparte PHP-class (`app/Livewire/...`) en Blade-view, staan PHP-logica en template nu samen in één bestand onder `resources/views/components/`, herkenbaar aan het ⚡-symbool in de bestandsnaam. Componenten worden gerouteerd met `Route::livewire()` in plaats van een class-referentie.
+## Functionaliteiten
 
-## Vereisten
+- Publieke welkomstpagina met links naar evenementen en beheer.
+- Publieke evenementenlijst op `/events`.
+- Bezoekers kunnen zich aanmelden met naam, e-mailadres en telefoonnummer.
+- Inloggen is voor bezoekers niet nodig.
+- Dubbele inschrijving met hetzelfde e-mailadres per evenement wordt voorkomen.
+- Capaciteit per evenement wordt bewaakt op basis van publieke inschrijvingen.
+- Beheerders beheren evenementen via `/admin`.
+- Admin kan geen nieuw evenement in het verleden aanmaken.
+- E-mail en telefoonnummer worden server-side gevalideerd.
+- Admin-header is gestyled in dezelfde stijl als de welkompagina, met een link terug naar de welkompagina.
 
-- PHP 8.2+
-- Composer
-- Node.js + npm
-- MySQL (bijv. via XAMPP)
+## Installatie
 
-## Installatie (voor wie dit project clone't)
-
-### 1. Repository clonen en dependencies installeren
+### 1. Dependencies installeren
 
 ```bash
-git clone <repo-url> evenementen-planner
-cd evenementen-planner
 composer install
 npm install
 ```
 
-### 2. Environment configureren
+### 2. Environment instellen
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Vul in `.env` de databasegegevens in:
+Vul in `.env` je databasegegevens in, bijvoorbeeld:
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -53,90 +57,68 @@ DB_PASSWORD=
 php artisan migrate
 ```
 
-> Als de database `evenementen_planner` nog niet bestaat, vraagt Laravel automatisch of deze aangemaakt mag worden (`Would you like to create it? [yes]`). Dit is voldoende, een aparte `CREATE DATABASE`-stap is niet nodig.
-
-### 4. Filament-admin-gebruiker aanmaken
+### 4. Admin-gebruiker aanmaken
 
 ```bash
 php artisan make:filament-user
 ```
-Vul naam, e-mailadres en wachtwoord in. Hiermee log je in op `/admin/login`.
 
-### 5. Assets bouwen en server starten
+Daarna kun je inloggen op `/admin/login`.
+
+### 5. Assets bouwen of dev-server starten
+
+Tijdens development:
 
 ```bash
-npm run dev      # tijdens development
-# of
-npm run build    # voor productie
-
+npm run dev
 php artisan serve
 ```
 
-De publieke site draait op `http://localhost:8000`, het beheerdersdashboard op `http://localhost:8000/admin`.
+Voor productie-assets:
 
----
-
-## Structuur publiek vs. beheer
-
-| Route | Onderdeel | Technologie | Voor wie |
-|---|---|---|---|
-| `/` | Welkomstpagina | Blade | Bezoekers |
-| `/events` | Evenementenlijst + aanmelden | Livewire 4 (los van Filament) | Bezoekers |
-| `/admin` | Beheerdersdashboard (CRUD op events) | FilamentPHP | Beheerders |
-| `/admin/login` | Inlogpagina beheerder | FilamentPHP (automatisch gegenereerd) | Beheerders |
-
-Filament en de publieke Livewire-pagina's zijn bewust gescheiden: Filament is bedoeld voor beheer (CRUD via een admin-panel), niet voor publieke, bezoekersgerichte interfaces. Beide gebruiken wel hetzelfde `Event`-model en dezelfde database, zodat een evenement dat een beheerder aanmaakt in `/admin` direct zichtbaar is op `/events`, zonder dubbele logica.
-
----
-
-## Wat is er tot nu toe gedaan (en waarom)
-
-| Stap | Commando | Toelichting |
-|---|---|---|
-| Project opzetten | `laravel new evenementen-planner` | Startpunt met Laravel, inclusief het Livewire-starterkit (vandaar dat `livewire/livewire`, `laravel/fortify` en `livewire/flux` al aanwezig waren). |
-| Tailwind | `npm install -D @tailwindcss/vite` | Laravel gebruikt Tailwind v4, dat via een Vite-plugin werkt in plaats van een los `tailwind.config.js` + PostCSS-setup zoals bij v3. Dit scheelt configuratiebestanden en sluit aan bij de huidige Laravel-standaard. |
-| Livewire | `composer require livewire/livewire` | Voor de interactieve, server-side gerenderde componenten (bijv. de aanmeldknop voor bezoekers), zonder dat hier een aparte front-end/API-laag voor nodig is. |
-| AlpineJS | `npm install alpinejs` | Voor lichte client-side interacties (bijv. modals/dropdowns) die geen server-roundtrip nodig hebben. |
-| FilamentPHP | `composer require filament/filament -W`<br>`php artisan filament:install --panels` | Genereert het admin-panel op `/admin`, inclusief kant-en-klare authenticatie (`/admin/login`). Filament is gekozen omdat het CRUD-schermen (formulieren, tabellen) automatisch kan genereren vanuit het model, wat veel handmatige Blade/Livewire-code voor het beheer bespaart. |
-| Admin-gebruiker | `php artisan make:filament-user` | Nodig om in te kunnen loggen op het dashboard. |
-| Event-model | `php artisan make:model Event -m` | Model + migratie voor de kernentiteit van de applicatie: het evenement. |
-| Events-migratie uitgewerkt | — | Velden toegevoegd: `title`, `description`, `location`, `starts_at`, `ends_at`, `capacity`. |
-| Aanmeldingen (pivot) | `php artisan make:migration create_event_user_table` | Many-to-many koppeltabel tussen `events` en `users`, zodat aanmeldingen via Eloquent's ingebouwde relaties (`belongsToMany`) worden afgehandeld in plaats van handmatige join-logica. |
-| Model-helpers | — | Query scope `scopeUpcoming()` en methodes `isFull()` / `hasAttendee()` toegevoegd aan `Event.php`, zodat business-logica op één centrale plek staat in plaats van verspreid over controllers/views — dit maakt de code beter onderhoudbaar en testbaar. |
-| Filament resource | `php artisan make:filament-resource Event --generate` | Genereert de CRUD-structuur (`EventResource`, `EventForm`, `EventsTable`, pages) voor het admin-dashboard. `EventForm` en `EventsTable` zijn vervolgens handmatig ingevuld met de daadwerkelijke velden (title, location, starts_at, ends_at, capacity), aangezien `--generate` een lege basis oplevert wanneer de migratie nog niet volledig was uitgewerkt op het moment van genereren. Als titelattribuut is `title` gebruikt (`$recordTitleAttribute`). |
-| Publieke welkomstpagina | `resources/views/welcome.blade.php` | Landingspagina met uitleg over het platform, een knop naar de evenementenlijst (`/events`) en een knop naar de beheerderslogin (`/admin/login`). Gestyled met Tailwind. |
-| Publieke evenementenlijst | `php artisan make:livewire EventList` | Livewire 4 single-file component (`resources/views/components/⚡event-list.blade.php`) dat aankomende evenementen toont (via de `upcoming()`-scope) en een aanmeldknop per evenement, met status "Vol" / "Je bent aangemeld" op basis van de model-helpers. Gerouteerd met `Route::livewire('/events', 'event-list')`. |
-
-### Nog te doen
-- Validatie verder verfijnen (bijv. `ends_at` na `starts_at`)
-- Policies/authorisatie voor het admin-panel (wie mag welke evenementen beheren)
-- Foutafhandeling en meldingen bij aanmelden (bijv. flash-message na succesvolle aanmelding)
-- Testen (Feature tests voor aanmelden, capaciteit, en Filament CRUD)
-
----
-
-## Projectstructuur (relevant voor deze opdracht)
-
+```bash
+npm run build
 ```
+
+## Routes
+
+| Route | Doel |
+| --- | --- |
+| `/` | Welkompagina |
+| `/events` | Publieke evenementenlijst en inschrijfformulier |
+| `/admin` | Filament beheerdersdashboard |
+| `/admin/login` | Login voor beheerders |
+
+## Belangrijke bestanden
+
+```text
 app/
   Models/
-    Event.php                          Model met relaties (attendees) en helpers (upcoming, isFull, hasAttendee)
-  Filament/
-    Resources/Events/
-      EventResource.php                Resource-configuratie (model, navigatie, pages)
-      Schemas/EventForm.php            Formuliervelden voor aanmaken/bewerken
-      Tables/EventsTable.php           Kolommen voor het overzicht in /admin
-      Pages/                           Gegenereerde CRUD-pagina's (List, Create, Edit)
+    Event.php
+    EventRegistration.php
+  Filament/Resources/Events/
+    EventResource.php
+    Schemas/EventForm.php
+    Tables/EventsTable.php
 database/
   migrations/
-    ..._create_events_table.php        Schema voor evenementen
-    ..._create_event_user_table.php    Pivot-tabel voor aanmeldingen
+    2026_07_09_112720_create_events_table.php
+    2026_07_09_162700_create_event_registrations_table.php
 resources/
   views/
-    welcome.blade.php                  Publieke welkomstpagina
-    components/
-      ⚡event-list.blade.php            Publiek Livewire 4-component: lijst + aanmeldknop
-  css/app.css                          Tailwind v4 entry point
+    welcome.blade.php
+    components/⚡event-list.blade.php
+    filament/admin/brand.blade.php
+    filament/admin/welcome-link.blade.php
+  css/
+    app.css
+    filament/admin/theme.css
 routes/
-  web.php                              Routes voor welkomstpagina en events-lijst
+  web.php
 ```
+
+## Architectuurkeuzes
+
+FilamentPHP wordt alleen gebruikt voor het beheer, omdat het snel en onderhoudbaar CRUD-schermen oplevert voor beheerders. De publieke bezoekersflow is bewust gebouwd als Livewire component, zodat bezoekers zonder account kunnen aanmelden en de interface los blijft van het admin-panel.
+
+Publieke inschrijvingen staan in een aparte `event_registrations` tabel. Dat past beter dan een user-pivot, omdat bezoekers geen account nodig hebben maar wel contactgegevens moeten achterlaten. Het `Event` model bevat de relatie en capaciteitlogica, zodat deze regels centraal blijven.

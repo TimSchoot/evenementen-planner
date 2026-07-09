@@ -1,0 +1,103 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+.fi-topbar-ctn {
+    border-bottom: 1px solid rgb(39 39 42);
+    background: rgb(24 24 27 / 0.92);
+    color: rgb(244 244 245);
+    backdrop-filter: blur(12px);
+}
+
+.fi-topbar > * {
+    flex-shrink: 0;
+}
+
+.fi-topbar {
+    max-width: 80rem;
+    min-height: auto;
+    margin-inline: auto;
+    padding: 1.25rem 2rem;
+    background: transparent;
+    box-shadow: none;
+}
+
+.fi-topbar-start {
+    flex: 1;
+}
+
+.fi-topbar-end {
+    display: none;
+}
+
+.fi-topbar .fi-icon-btn,
+.fi-topbar .fi-user-menu-trigger {
+    color: rgb(212 212 216);
+}
+
+.fi-topbar .fi-icon-btn:hover,
+.fi-topbar .fi-user-menu-trigger:hover {
+    color: rgb(251 191 36);
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-brand-icon {
+    display: flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background: rgb(245 158 11);
+    color: rgb(0 0 0);
+}
+
+.admin-brand-svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.admin-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.admin-brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgb(244 244 245);
+}
+
+.admin-brand-subtitle {
+    margin-top: 0.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: rgb(161 161 170);
+}
+
+.admin-header-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(63 63 70);
+    border-radius: 0.5rem;
+    background: rgb(24 24 27);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(212 212 216);
+    transition-property: color, border-color, background-color;
+    transition-duration: 150ms;
+}
+
+.admin-header-link:hover {
+    border-color: rgb(245 158 11);
+    color: rgb(251 191 36);
+}

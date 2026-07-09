@@ -10,6 +10,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -17,6 +18,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -28,6 +30,15 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Evenementen-planner')
+            ->brandLogo(fn () => new HtmlString(view('filament.admin.brand')->render()))
+            ->brandLogoHeight('2.5rem')
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->userMenu(false)
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_END,
+                fn () => view('filament.admin.welcome-link'),
+            )
             ->colors([
                 'primary' => Color::Amber,
             ])

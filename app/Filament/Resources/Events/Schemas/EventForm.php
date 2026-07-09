@@ -24,7 +24,8 @@ class EventForm
                     ->maxLength(255),
 
                 DateTimePicker::make('starts_at')
-                    ->required(),
+                    ->required()
+                    ->minDate(fn (string $operation) => $operation === 'create' ? now() : null),
 
                 DateTimePicker::make('ends_at'),
 
