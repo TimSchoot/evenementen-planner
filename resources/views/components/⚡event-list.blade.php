@@ -56,19 +56,26 @@ new class extends Component
             return;
         }
 
+        if ($event->registrations()->where('phone', $validated['phone'])->exists()) {
+            $this->addError('phone', 'Dit telefoonnummer is al aangemeld voor dit evenement.');
+
+            return;
+        }
+
         try {
             EventRegistration::create([
                 ...$validated,
                 'event_id' => $event->id,
             ]);
         } catch (QueryException) {
-            $this->addError('email', 'Dit e-mailadres is al aangemeld voor dit evenement.');
+            $this->addError('email', 'Dit e-mailadres of telefoonnummer is al aangemeld voor dit evenement.');
 
             return;
         }
 
         $this->successMessage = "Je bent aangemeld voor {$event->title}.";
         $this->reset('selectedEventId', 'name', 'email', 'phone');
+        $this->resetErrorBag();
     }
 
     public function cancelRegistration(): void

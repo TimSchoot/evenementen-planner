@@ -27,7 +27,11 @@ class EventForm
                     ->required()
                     ->minDate(fn (string $operation) => $operation === 'create' ? now() : null),
 
-                DateTimePicker::make('ends_at'),
+                DateTimePicker::make('ends_at')
+                    ->afterOrEqual('starts_at')
+                    ->validationMessages([
+                        'after_or_equal' => 'De einddatum mag niet eerder zijn dan de startdatum.',
+                    ]),
 
                 TextInput::make('capacity')
                     ->numeric()

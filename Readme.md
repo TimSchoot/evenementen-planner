@@ -17,12 +17,15 @@ Laravel-applicatie voor het beheren van evenementen. Beheerders maken en beheren
 - Publieke evenementenlijst op `/events`.
 - Bezoekers kunnen zich aanmelden met naam, e-mailadres en telefoonnummer.
 - Inloggen is voor bezoekers niet nodig.
+- Na een succesvolle inschrijving wordt het formulier automatisch leeggemaakt.
 - Dubbele inschrijving met hetzelfde e-mailadres per evenement wordt voorkomen.
+- Dubbele inschrijving met hetzelfde telefoonnummer per evenement wordt voorkomen.
 - Capaciteit per evenement wordt bewaakt op basis van publieke inschrijvingen.
 - Beheerders beheren evenementen via `/admin`.
 - Het admin-overzicht toont per evenement hoeveel plekken al gebruikt zijn.
 - Beheerders kunnen per evenement direct de lijst met ingeschreven mensen bekijken.
 - Admin kan geen nieuw evenement in het verleden aanmaken.
+- Admin kan geen einddatum kiezen die eerder is dan de startdatum.
 - E-mail en telefoonnummer worden server-side gevalideerd.
 - Admin-header is gestyled in dezelfde stijl als de welkompagina, met een link terug naar de welkompagina.
 
@@ -58,6 +61,8 @@ DB_PASSWORD=
 ```bash
 php artisan migrate
 ```
+
+Let op: de database dwingt af dat een telefoonnummer maar één keer per evenement mag voorkomen. Als er al dubbele telefoonnummers in bestaande inschrijvingen staan, ruim die dubbele records eerst op voordat je de migraties draait.
 
 ### 4. Admin-gebruiker aanmaken
 
@@ -107,6 +112,7 @@ database/
   migrations/
     2026_07_09_112720_create_events_table.php
     2026_07_09_162700_create_event_registrations_table.php
+    2026_07_09_180000_add_unique_phone_per_event_to_event_registrations_table.php
 resources/
   views/
     welcome.blade.php

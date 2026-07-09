@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Events\RelationManagers;
 
+use App\Models\EventRegistration;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -10,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rules\Unique;
 
 class RegistrationsRelationManager extends RelationManager
 {
@@ -33,11 +35,27 @@ class RegistrationsRelationManager extends RelationManager
                     ->label('E-mailadres')
                     ->email()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique(
+                        table: EventRegistration::class,
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('event_id', $this->getOwnerRecord()->getKey()),
+                    )
+                    ->validationMessages([
+                        'unique' => 'Dit e-mailadres is al aangemeld voor dit evenement.',
+                    ]),
                 TextInput::make('phone')
                     ->label('Telefoon')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique(
+                        table: EventRegistration::class,
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('event_id', $this->getOwnerRecord()->getKey()),
+                    )
+                    ->validationMessages([
+                        'unique' => 'Dit telefoonnummer is al aangemeld voor dit evenement.',
+                    ]),
             ]);
     }
 
