@@ -1,5 +1,13 @@
-<x-layouts::app.sidebar :title="$title ?? null">
-    <flux:main>
-        {{ $slot }}
-    </flux:main>
-</x-layouts::app.sidebar>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Evenementen Planner</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+<body>
+    {{ $slot ?? '' }}
+    @livewireScripts
+</body>
+</html>
