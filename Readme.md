@@ -20,6 +20,8 @@ Laravel-applicatie voor het beheren van evenementen. Beheerders maken en beheren
 - Dubbele inschrijving met hetzelfde e-mailadres per evenement wordt voorkomen.
 - Capaciteit per evenement wordt bewaakt op basis van publieke inschrijvingen.
 - Beheerders beheren evenementen via `/admin`.
+- Het admin-overzicht toont per evenement hoeveel plekken al gebruikt zijn.
+- Beheerders kunnen per evenement direct de lijst met ingeschreven mensen bekijken.
 - Admin kan geen nieuw evenement in het verleden aanmaken.
 - E-mail en telefoonnummer worden server-side gevalideerd.
 - Admin-header is gestyled in dezelfde stijl als de welkompagina, met een link terug naar de welkompagina.
@@ -98,6 +100,7 @@ app/
     EventRegistration.php
   Filament/Resources/Events/
     EventResource.php
+    RelationManagers/RegistrationsRelationManager.php
     Schemas/EventForm.php
     Tables/EventsTable.php
 database/
@@ -122,3 +125,5 @@ routes/
 FilamentPHP wordt alleen gebruikt voor het beheer, omdat het snel en onderhoudbaar CRUD-schermen oplevert voor beheerders. De publieke bezoekersflow is bewust gebouwd als Livewire component, zodat bezoekers zonder account kunnen aanmelden en de interface los blijft van het admin-panel.
 
 Publieke inschrijvingen staan in een aparte `event_registrations` tabel. Dat past beter dan een user-pivot, omdat bezoekers geen account nodig hebben maar wel contactgegevens moeten achterlaten. Het `Event` model bevat de relatie en capaciteitlogica, zodat deze regels centraal blijven.
+
+In het admin-panel gebruikt de event resource een relation manager voor `registrations`. Daardoor kan een beheerder vanuit een geopend evenement de bijbehorende inschrijvingen bekijken, terwijl het evenementenoverzicht met een `registrations_count` kolom snel laat zien hoeveel capaciteit al in gebruik is.
