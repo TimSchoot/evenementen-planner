@@ -26,8 +26,6 @@ Laravel-applicatie voor het beheren van evenementen. Beheerders maken en beheren
 - Beheerders kunnen per evenement direct de lijst met ingeschreven mensen bekijken.
 - Admin kan geen nieuw evenement in het verleden aanmaken.
 - Admin kan geen einddatum kiezen die eerder is dan de startdatum.
-- E-mail en telefoonnummer worden server-side gevalideerd.
-- Admin-header is gestyled in dezelfde stijl als de welkompagina, met een link terug naar de welkompagina.
 
 ## Installatie
 
